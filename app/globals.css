@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #08080e;
+  --teal-400: #5DCAA5;
+  --teal-500: #1D9E75;
+  --teal-700: #0F6E56;
+  --purple-200: #CECBF6;
+  --purple-400: #AFA9EC;
+  --purple-500: #7166D1;
+  --coral: #E24B4A;
+  --amber: #EF9F27;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; }
+
+body {
+  background: var(--bg);
+  color: #fff;
+  font-family: var(--font-syne), 'Syne', sans-serif;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* Scrolling track */
+#track {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+  transition: transform 0.72s cubic-bezier(0.77, 0, 0.14, 1);
+}
+
+.section {
+  width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Widget sections */
+.widget-body {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.widget-body canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.widget-body .dom-body {
+  position: absolute;
+  inset: 0;
+  padding: 18px 28px;
+  overflow: hidden;
+  font-family: var(--font-jetbrains), 'JetBrains Mono', monospace;
+}
+
+/* Step pip bar */
+.pip { height: 3px; border-radius: 2px; background: rgba(255,255,255,.09); transition: background .3s, width .3s; }
+.pip.done   { background: #1D9E75; }
+.pip.active { background: #7166D1; }
+
+/* Bridge section */
+.bridge-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 0 52px;
+  border-left: 3px solid rgba(255,255,255,.05);
+  margin: 40px 40px 40px 52px;
+  padding-left: 36px;
+}
+
+/* Ensure nav doesn't overflow */
+nav { z-index: 200; }
