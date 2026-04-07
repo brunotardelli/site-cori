@@ -35,8 +35,10 @@ body {
   transition: transform 0.72s cubic-bezier(0.77, 0, 0.14, 1);
 }
 
+/* Cada seção ocupa 100% da altura do container (definida via JS no page.tsx) */
 .section {
   width: 100%;
+  height: 100%;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;

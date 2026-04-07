@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useScrollEngine } from '@/hooks/useScrollEngine'
 import { useLenis } from '@/hooks/useLenis'
 import { Nav } from '@/components/layout/Nav'
@@ -19,20 +19,35 @@ import { W6AttackCost } from '@/components/widgets/W6AttackCost'
 import { W7AdaptiveLayer } from '@/components/widgets/W7AdaptiveLayer'
 import { SECTIONS } from '@/lib/constants'
 
+const NAV_H = 44
+
 export default function Home() {
   useLenis()
   const { currentSection, widgetRaw, widgetStep, widgetProgress, widgetDone, goTo } = useScrollEngine()
   const trackRef = useRef<HTMLDivElement>(null)
+  const [secH, setSecH] = useState(0)
 
-  // Move track via translateY
+  // Calcula a altura real da seção uma vez e atualiza se a janela mudar
+  useEffect(() => {
+    const calc = () => setSecH(window.innerHeight - NAV_H)
+    calc()
+    window.addEventListener('resize', calc)
+    return () => window.removeEventListener('resize', calc)
+  }, [])
+
+  // Move o track usando a mesma altura que o scroll engine usa
   useEffect(() => {
     const track = trackRef.current
-    if (!track) return
-    const secH = window.innerHeight - 44
+    if (!track || secH === 0) return
     track.style.transform = `translateY(-${currentSection * secH}px)`
-  }, [currentSection])
+  }, [currentSection, secH])
 
   const isActive = (id: number) => currentSection === id
+
+  // Aguarda o secH ser calculado antes de renderizar
+  if (secH === 0) return null
+
+  const sH = `${secH}px`
 
   return (
     <>
@@ -46,48 +61,51 @@ export default function Home() {
       <div
         id="scroller"
         className="fixed"
-        style={{ top: 44, left: 0, right: 0, bottom: 0, overflow: 'hidden' }}
+        style={{ top: NAV_H, left: 0, right: 0, bottom: 0, overflow: 'hidden' }}
       >
         <div
           id="track"
           ref={trackRef}
-          style={{ display: 'flex', flexDirection: 'column', willChange: 'transform', transition: 'transform 0.72s cubic-bezier(0.77,0,0.14,1)' }}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            willChange: 'transform',
+            transition: 'transform 0.72s cubic-bezier(0.77,0,0.14,1)',
+          }}
         >
           {SECTIONS.map(sec => {
-            const secH = 'calc(100vh - 44px)'
-
             if (sec.kind === 'hero') return (
-              <div key={sec.id} id={`section-${sec.id}`} style={{ height: secH, flexShrink: 0 }}>
+              <div key={sec.id} id={`section-${sec.id}`} style={{ height: sH, flexShrink: 0 }}>
                 <Hero />
               </div>
             )
 
             if (sec.kind === 'engine') return (
-              <div key={sec.id} id={`section-${sec.id}`} style={{ height: secH, flexShrink: 0 }}>
+              <div key={sec.id} id={`section-${sec.id}`} style={{ height: sH, flexShrink: 0 }}>
                 <EngineClarity />
               </div>
             )
 
             if (sec.kind === 'bridge') return (
-              <div key={sec.id} id={`section-${sec.id}`} style={{ height: secH, flexShrink: 0 }}>
+              <div key={sec.id} id={`section-${sec.id}`} style={{ height: sH, flexShrink: 0 }}>
                 <Bridge sectionId={sec.id} />
               </div>
             )
 
             if (sec.kind === 'noreturn') return (
-              <div key={sec.id} id={`section-${sec.id}`} style={{ height: secH, flexShrink: 0 }}>
+              <div key={sec.id} id={`section-${sec.id}`} style={{ height: sH, flexShrink: 0 }}>
                 <PointOfNoReturn />
               </div>
             )
 
             if (sec.kind === 'product') return (
-              <div key={sec.id} id={`section-${sec.id}`} style={{ height: secH, flexShrink: 0 }}>
+              <div key={sec.id} id={`section-${sec.id}`} style={{ height: sH, flexShrink: 0 }}>
                 <ProductSection />
               </div>
             )
 
             if (sec.kind === 'cta') return (
-              <div key={sec.id} id={`section-${sec.id}`} style={{ height: secH, flexShrink: 0 }}>
+              <div key={sec.id} id={`section-${sec.id}`} style={{ height: sH, flexShrink: 0 }}>
                 <CTA />
               </div>
             )
@@ -104,7 +122,11 @@ export default function Home() {
               const done = active ? widgetDone : false
 
               return (
-                <div key={sec.id} id={`section-${sec.id}`} style={{ height: secH, flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
+                <div
+                  key={sec.id}
+                  id={`section-${sec.id}`}
+                  style={{ height: sH, flexShrink: 0, display: 'flex', flexDirection: 'column' }}
+                >
                   <WidgetShell
                     widgetId={sec.widgetId}
                     secNum={secNumMap[sec.widgetId]}

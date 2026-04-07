@@ -12,6 +12,7 @@ export interface ScrollEngine {
 }
 
 const TOTAL = SECTIONS.length
+const NAV_H = 44
 
 export function useScrollEngine(): ScrollEngine {
   const [currentSection, setCurrentSection] = useState(0)
@@ -22,7 +23,6 @@ export function useScrollEngine(): ScrollEngine {
   const secAccum = useRef(0)
   const doneSet = useRef(new Set<number>())
 
-  // Widget step/progress derived from rawRef
   const getStepInfo = useCallback((secId: number, raw: number) => {
     const sec = SECTIONS.find(s => s.id === secId)
     const totalSteps = sec?.steps ?? 1
@@ -42,7 +42,6 @@ export function useScrollEngine(): ScrollEngine {
     curRef.current = n
     secAccum.current = 0
 
-    // Reset widget raw if entering fresh widget
     if (WIDGET_SEC_IDS.has(n) && !doneSet.current.has(n)) {
       rawRef.current = 0
     } else if (WIDGET_SEC_IDS.has(n) && doneSet.current.has(n)) {
@@ -52,10 +51,6 @@ export function useScrollEngine(): ScrollEngine {
 
     setCurrentSection(n)
     setWidgetRaw(rawRef.current)
-
-    // Scroll section into view
-    const el = document.getElementById(`section-${n}`)
-    el?.scrollIntoView({ behavior: 'smooth' })
   }, [])
 
   const onDelta = useCallback((delta: number) => {
@@ -83,7 +78,6 @@ export function useScrollEngine(): ScrollEngine {
       return
     }
 
-    // Non-widget or done widget — navigate sections
     secAccum.current += delta
 
     if (secAccum.current > SEC_DELTA) {
@@ -117,7 +111,6 @@ export function useScrollEngine(): ScrollEngine {
         e.preventDefault()
         onDelta(STEP_DELTA * 0.8)
       }
-
       if (e.key === 'ArrowUp') {
         e.preventDefault()
         onDelta(-STEP_DELTA * 0.8)
