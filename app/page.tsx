@@ -27,7 +27,6 @@ export default function Home() {
   const trackRef = useRef<HTMLDivElement>(null)
   const [secH, setSecH] = useState(0)
 
-  // Calcula a altura real da seção uma vez e atualiza se a janela mudar
   useEffect(() => {
     const calc = () => setSecH(window.innerHeight - NAV_H)
     calc()
@@ -35,7 +34,6 @@ export default function Home() {
     return () => window.removeEventListener('resize', calc)
   }, [])
 
-  // Move o track usando a mesma altura que o scroll engine usa
   useEffect(() => {
     const track = trackRef.current
     if (!track || secH === 0) return
@@ -44,7 +42,6 @@ export default function Home() {
 
   const isActive = (id: number) => currentSection === id
 
-  // Aguarda o secH ser calculado antes de renderizar
   if (secH === 0) return null
 
   const sH = `${secH}px`
@@ -74,38 +71,40 @@ export default function Home() {
           }}
         >
           {SECTIONS.map(sec => {
+            const baseStyle = { height: sH, flexShrink: 0, overflow: 'hidden' as const }
+
             if (sec.kind === 'hero') return (
-              <div key={sec.id} id={`section-${sec.id}`} style={{ height: sH, flexShrink: 0 }}>
+              <div key={sec.id} id={`section-${sec.id}`} style={baseStyle}>
                 <Hero />
               </div>
             )
 
             if (sec.kind === 'engine') return (
-              <div key={sec.id} id={`section-${sec.id}`} style={{ height: sH, flexShrink: 0 }}>
+              <div key={sec.id} id={`section-${sec.id}`} style={baseStyle}>
                 <EngineClarity />
               </div>
             )
 
             if (sec.kind === 'bridge') return (
-              <div key={sec.id} id={`section-${sec.id}`} style={{ height: sH, flexShrink: 0 }}>
+              <div key={sec.id} id={`section-${sec.id}`} style={baseStyle}>
                 <Bridge sectionId={sec.id} />
               </div>
             )
 
             if (sec.kind === 'noreturn') return (
-              <div key={sec.id} id={`section-${sec.id}`} style={{ height: sH, flexShrink: 0 }}>
+              <div key={sec.id} id={`section-${sec.id}`} style={baseStyle}>
                 <PointOfNoReturn />
               </div>
             )
 
             if (sec.kind === 'product') return (
-              <div key={sec.id} id={`section-${sec.id}`} style={{ height: sH, flexShrink: 0 }}>
+              <div key={sec.id} id={`section-${sec.id}`} style={baseStyle}>
                 <ProductSection />
               </div>
             )
 
             if (sec.kind === 'cta') return (
-              <div key={sec.id} id={`section-${sec.id}`} style={{ height: sH, flexShrink: 0 }}>
+              <div key={sec.id} id={`section-${sec.id}`} style={baseStyle}>
                 <CTA />
               </div>
             )
@@ -125,7 +124,7 @@ export default function Home() {
                 <div
                   key={sec.id}
                   id={`section-${sec.id}`}
-                  style={{ height: sH, flexShrink: 0, display: 'flex', flexDirection: 'column' }}
+                  style={{ ...baseStyle, display: 'flex', flexDirection: 'column' }}
                 >
                   <WidgetShell
                     widgetId={sec.widgetId}
